@@ -21,6 +21,9 @@ async function run() {
     const exploreCollection = exploreDatabase.collection("explore_item");
     const reviewDatabase = client.db("allReviews");
     const reviewCollection = reviewDatabase.collection("reviews");
+    const addProductDatabase = client.db("allAddProducts");
+    const addProductCollection = addProductDatabase.collection("addProduct");
+    
 
 
     // get
@@ -32,6 +35,15 @@ async function run() {
 
       console.log(purchase);
       res.json(purchase);
+    })
+
+
+    // get payment
+    app.get('/purchase_info/:id',async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id:ObjectId(id)};
+      const result = await purchaseInfoCollection.findOne(query);
+      res.json(result);
     })
 
     // app.get("/explore_item/:id", async (req, res) => {
@@ -88,13 +100,36 @@ app.delete("/explore_item/:id", async (req, res) => {
       console.log(result);
       res.json(result)
     })
-    // post
+    
+    // post addProduct
+    app.post('/addProduct', async (req, res) => {
+      const addProduct = req.body;
+      const result = await addProductCollection.insertOne(addProduct)
+      console.log(result);
+      res.json(result)
+    })
+
+    // get add product
+    app.get('/getallproduct',async(req,res)=>{
+      const result = await addProductCollection.find({}).toArray();
+      res.json(result);
+    })
+
+
+    // post reviews
     app.post('/reviews', async (req, res) => {
       const review = req.body;
       const result = await reviewCollection.insertOne(review)
       console.log(result);
       res.json(result)
     })
+
+    // get reviews
+    app.get('/allreviews',async(req,res)=>{
+      const result = await reviewCollection.find({}).toArray();
+      res.json(result);
+    })
+    
 
     // user post api
     app.post('/users', async (req, res) => {
@@ -118,11 +153,13 @@ app.delete("/explore_item/:id", async (req, res) => {
     // admin make
     app.put('/users/admin',async(req,res)=>{
       const user = req.body;
-      console.log('put',user);
-      const filter = { email: user.email };
-      const updateDoc = { $set: {role:'admin'} };
-      const result = await usersCollection.updateOne(filter,updateDoc);
-      res.json(result);
+      console.log(user);
+      // console.log('put',user);
+      // const filter = { email: user.email };
+      // const updateDoc = { $set: {role:'admin'} };
+      // const result = await usersCollection.updateOne(filter,updateDoc);
+      // res.json(result);
+      // res.json(result);
     })
 
     app.get('/users/:email',async(req,res)=>{
