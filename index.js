@@ -159,7 +159,7 @@ app.delete("/explore_item/:id", async (req, res) => {
       // const updateDoc = { $set: {role:'admin'} };
       // const result = await usersCollection.updateOne(filter,updateDoc);
       // res.json(result);
-      // res.json(result);
+     
     })
 
     app.get('/users/:email',async(req,res)=>{
