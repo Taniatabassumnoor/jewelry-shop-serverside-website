@@ -17,12 +17,14 @@ async function run() {
     const database = client.db("user_purchase_info");
     const purchaseInfoCollection = database.collection("purchase_info");
     const usersCollection = database.collection("users");
-    const exploreDatabase = client.db("all_explore");
-    const exploreCollection = exploreDatabase.collection("explore_item");
+    // const exploreDatabase = client.db("all_explore");
+    // const exploreCollection = exploreDatabase.collection("explore_item");
     const reviewDatabase = client.db("allReviews");
     const reviewCollection = reviewDatabase.collection("reviews");
     const addProductDatabase = client.db("allAddProducts");
     const addProductCollection = addProductDatabase.collection("addProduct");
+    const bookingDatabase = client.db("allAddProducts");
+    const bookingCollection = bookingDatabase.collection("booking");
     
 
 
@@ -65,12 +67,12 @@ async function run() {
   //     res.json(service);
   // })
 // single service
-app.get("/explore_item/:id", async (req, res) => {
-const id = req.params.id;
-const query = {_id: ObjectId(id)};
-const result = await exploreCollection.findOne(query)
-res.json(result);
-});
+// app.get("/explore_item/:id", async (req, res) => {
+// const id = req.params.id;
+// const query = {_id: ObjectId(id)};
+// const result = await exploreCollection.findOne(query)
+// res.json(result);
+// });
 
  // insert order and
 
@@ -80,19 +82,19 @@ res.json(result);
 // });
 
 // delete
-app.delete("/explore_item/:id", async (req, res) => {
-  const id = req.params.id;
-  const query = {_id: ObjectId(id)};
-  const result = await exploreCollection.deleteOne(query)
-  res.json(result);
-  });
+// app.delete("/explore_item/:id", async (req, res) => {
+//   const id = req.params.id;
+//   const query = {_id: ObjectId(id)};
+//   const result = await exploreCollection.deleteOne(query)
+//   res.json(result);
+//   });
 
 
   //  explore api get
-  app.get('/explore_item',async (req,res)=>{
-    const result = await exploreCollection.find({}).toArray();
-    res.send(result);
-  })
+  // app.get('/explore_item',async (req,res)=>{
+  //   const result = await exploreCollection.find({}).toArray();
+  //   res.send(result);
+  // })
     // post
     app.post('/purchase_info', async (req, res) => {
       const purchase = req.body;
@@ -114,7 +116,18 @@ app.delete("/explore_item/:id", async (req, res) => {
       const result = await addProductCollection.find({}).toArray();
       res.json(result);
     })
+    // get single Product
+    app.get('/singleProduct/:id',async(req,res)=>{
+     const result = await addProductCollection.find({_id:ObjectId(req.params.id)}).toArray(); 
+     res.send(result[0]);
+    })
 
+
+    // confirm order
+    app.post('/confirmOrder',async(req,res)=>{
+      const result= await bookingCollection.insertOne(req.body);
+      res.send(result);
+})
 
     // post reviews
     app.post('/reviews', async (req, res) => {
@@ -173,7 +186,13 @@ app.delete("/explore_item/:id", async (req, res) => {
       res.json({admin:isAdmin})
     })
 
-   
+  // // New Way Start---------------------
+  // app.post('/addExplore',(req,body)=>{
+  //   console.log(req.body)
+  // })
+
+
+
 
   }
   finally {
