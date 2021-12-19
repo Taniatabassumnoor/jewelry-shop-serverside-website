@@ -23,8 +23,8 @@ async function run() {
     const reviewCollection = reviewDatabase.collection("reviews");
     const addProductDatabase = client.db("allAddProducts");
     const addProductCollection = addProductDatabase.collection("addProduct");
-    const bookingDatabase = client.db("allAddProducts");
-    const bookingCollection = bookingDatabase.collection("booking");
+    // const bookingDatabase = client.db("allAddProducts");
+    const bookingCollection = addProductDatabase.collection("booking");
     
 
 
@@ -125,9 +125,28 @@ async function run() {
 
     // confirm order
     app.post('/confirmOrder',async(req,res)=>{
+      console.log(req.body)
       const result= await bookingCollection.insertOne(req.body);
       res.send(result);
 })
+
+    // my order
+     app.get('/myOrderItem/:email',async(req,res)=>{
+       console.log(req.params.email)
+     const result = await bookingCollection.find({email:req.params.email}).toArray()
+     res.send(result);
+     })
+
+    //  Delete Order
+
+    app.delete('/deleteControl/:id',async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: ObjectId(id)};
+      const result = await bookingCollection.deleteOne(query)
+      console.log(result)
+      res.json(result);
+    })
+    
 
     // post reviews
     app.post('/reviews', async (req, res) => {
@@ -164,32 +183,30 @@ async function run() {
     })
 
     // admin make
+  
     app.put('/users/admin',async(req,res)=>{
       const user = req.body;
-      console.log(user);
-      // console.log('put',user);
-      // const filter = { email: user.email };
-      // const updateDoc = { $set: {role:'admin'} };
-      // const result = await usersCollection.updateOne(filter,updateDoc);
-      // res.json(result);
+      console.log('put',user);
+      const filter = { email: user.email };
+      const updateDoc = { $set: {role:'admin'} };
+      const result = await usersCollection.updateOne(filter,updateDoc);
+      res.json(result);
      
     })
 
     app.get('/users/:email',async(req,res)=>{
       const email = req.params.email;
       const query = {email:email};
-      const user = await usersCollection.find(query);
-      let isAdmin = true;
+      const user = await usersCollection.findOne(query);
+      let isAdmin = false;
       if(user?.role==='admin'){
-         isAdmin(false)
+         isAdmin = true;
       }
       res.json({admin:isAdmin})
     })
 
   // // New Way Start---------------------
-  // app.post('/addExplore',(req,body)=>{
-  //   console.log(req.body)
-  // })
+
 
 
 
